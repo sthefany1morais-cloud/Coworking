@@ -1,20 +1,24 @@
 package view.controller;
 
-import execoes.*;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
+import execoes.*;
 import model.espacos.Auditorio;
 import model.espacos.Espaco;
 import model.espacos.SalaDeReuniao;
 import model.pagamentos.MetodoDePagamento;
-import service.EspacoService;
 import service.ReservaService;
-import util.*;
+import util.CalculoReservaUtil;
+import util.CampoUtil;
+import util.FormatadorUtil;
+import util.MensagemUtil;
+import util.ValidacaoUtil;
 import view.MainCoworking;
 
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.util.Arrays;
 
 public class DetalhesReservaController {
     @FXML private Label espacoInfoLabel;
@@ -32,7 +36,6 @@ public class DetalhesReservaController {
 
     private static Espaco espacoSelecionado;
     private MainCoworking mainApp;
-    private EspacoService espacoService;
     private ReservaService reservaService;
 
     public static void setEspacoSelecionado(Espaco espaco) {
@@ -43,8 +46,7 @@ public class DetalhesReservaController {
         this.mainApp = mainApp;
     }
 
-    public void setServices(EspacoService espacoService, ReservaService reservaService) {
-        this.espacoService = espacoService;
+    public void setReservaService(ReservaService reservaService) {
         this.reservaService = reservaService;
         if (espacoSelecionado != null) {
             carregarEspaco();
@@ -60,29 +62,20 @@ public class DetalhesReservaController {
         dataFimPicker.setEditable(false);
         CampoUtil.configurarCampoHora(horaInicioField);
         CampoUtil.configurarCampoHora(horaFimField);
-        salvarButton.setDisable(true);
 
-        dataInicioPicker.valueProperty().addListener((obs, oldVal, newVal) -> verificarHabilitarBotao());
-        horaInicioField.textProperty().addListener((obs, oldVal, newVal) -> verificarHabilitarBotao());
-        dataFimPicker.valueProperty().addListener((obs, oldVal, newVal) -> verificarHabilitarBotao());
-        horaFimField.textProperty().addListener((obs, oldVal, newVal) -> verificarHabilitarBotao());
-        metodoComboBox.valueProperty().addListener((obs, oldVal, newVal) -> verificarHabilitarBotao());
+        CampoUtil.habilitarBotaoSeCamposPreenchidos(
+                salvarButton,
+                Arrays.asList(dataInicioPicker, dataFimPicker),
+                Arrays.asList(horaInicioField, horaFimField),
+                Arrays.asList(metodoComboBox),
+                Arrays.asList()
+        );
 
         dataInicioPicker.setOnAction(e -> calcularCusto());
         horaInicioField.setOnKeyReleased(e -> calcularCusto());
         dataFimPicker.setOnAction(e -> calcularCusto());
         horaFimField.setOnKeyReleased(e -> calcularCusto());
         projetorCheckBox.setOnAction(e -> calcularCusto());
-    }
-
-    private void verificarHabilitarBotao() {
-        boolean habilitar = dataInicioPicker.getValue() != null &&
-                !horaInicioField.getText().isEmpty() &&
-                dataFimPicker.getValue() != null &&
-                !horaFimField.getText().isEmpty() &&
-                metodoComboBox.getValue() != null &&
-                !metodoComboBox.getValue().isEmpty();
-        salvarButton.setDisable(!habilitar);
     }
 
     private void carregarEspaco() {

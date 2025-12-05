@@ -11,6 +11,7 @@ import model.reservas.Reserva;
 import service.EspacoService;
 import service.RelatorioService;
 import service.ValidacaoService;
+import util.CampoUtil;
 import util.MensagemUtil;
 import view.MainCoworking;
 import javafx.stage.Stage;
@@ -19,6 +20,7 @@ import javafx.fxml.FXMLLoader;
 import java.time.LocalDateTime;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -85,10 +87,13 @@ public class RelatoriosController {
             verificarHabilitarBotao();
         });
 
-        dataInicioPicker.valueProperty().addListener((obs, oldVal, newVal) -> verificarHabilitarBotao());
-        dataFimPicker.valueProperty().addListener((obs, oldVal, newVal) -> verificarHabilitarBotao());
-
-        topSpinner.valueProperty().addListener((obs, oldVal, newVal) -> verificarHabilitarBotao());
+        CampoUtil.habilitarBotaoSeCamposPreenchidos(
+                gerarButton,
+                Arrays.asList(dataInicioPicker, dataFimPicker),
+                Collections.emptyList(),
+                Collections.emptyList(),
+                Arrays.asList(topSpinner)
+        );
     }
 
     private void atualizarCampos() {
@@ -119,10 +124,13 @@ public class RelatoriosController {
         }
         boolean habilitar = false;
         if ("Reservas realizadas em um período".equals(tipo) || "Utilização por espaço".equals(tipo)) {
+            // Para esses tipos, as datas são obrigatórias
             habilitar = dataInicioPicker.getValue() != null && dataFimPicker.getValue() != null;
         } else if ("Faturamento por tipo de espaço".equals(tipo)) {
+            // Sempre habilitado, pois não requer campos adicionais
             habilitar = true;
         } else if ("Top espaços mais utilizados".equals(tipo)) {
+            // Verifica se o valor do spinner é válido (>0)
             habilitar = topSpinner.getValue() > 0;
         }
         gerarButton.setDisable(!habilitar);
