@@ -10,9 +10,6 @@ import java.util.List;
 
 public class ValidacaoService {
 
-    /**
-     * Valida se um nome é único entre espaços existentes e disponíveis (lógica de negócio).
-     */
     public static void validarNomeUnico(String nome, List<Espaco> espacosExistentes) throws EspacoJaExistenteException {
         boolean existe = espacosExistentes.stream()
                 .anyMatch(e -> e.isExistente() &&
@@ -26,9 +23,6 @@ public class ValidacaoService {
         }
     }
 
-    /**
-     * Valida período de datas (lógica de negócio).
-     */
     public static void validarPeriodo(LocalDateTime inicio, LocalDateTime fim) throws ValidacaoException {
         if (inicio == null || fim == null) {
             throw new ValidacaoException(List.of("Datas de início e fim são obrigatórias."));
@@ -38,5 +32,3 @@ public class ValidacaoService {
         }
     }
 }
-
-// Classe ajustada: ValidacaoUtil (em main.java.util) - Apenas auxiliares leves de UI

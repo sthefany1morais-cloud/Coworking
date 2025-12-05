@@ -1,21 +1,17 @@
 package view.controller;
 
+import execoes.*;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
-import main.java.execoes.*;
-import main.java.model.espacos.Auditorio;
-import main.java.model.espacos.Espaco;
-import main.java.model.espacos.SalaDeReuniao;
-import main.java.model.pagamentos.MetodoDePagamento;
-import main.java.service.EspacoService;
-import main.java.service.ReservaService;
-import main.java.util.CalculoReservaUtil;
-import main.java.util.CampoUtil;
-import main.java.util.FormatadorUtil;
-import main.java.util.MensagemUtil;
-import main.java.util.ValidacaoUtil;
-import main.java.view.MainCoworking;
+import model.espacos.Auditorio;
+import model.espacos.Espaco;
+import model.espacos.SalaDeReuniao;
+import model.pagamentos.MetodoDePagamento;
+import service.EspacoService;
+import service.ReservaService;
+import util.*;
+import view.MainCoworking;
 
 import java.time.LocalDateTime;
 import java.time.LocalTime;

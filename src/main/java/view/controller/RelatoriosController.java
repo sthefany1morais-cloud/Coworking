@@ -1,4 +1,4 @@
-package main.java.view.controller;
+package view.controller;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -6,13 +6,13 @@ import javafx.fxml.FXML;
 import javafx.scene.Parent;
 import javafx.scene.control.*;
 import javafx.scene.layout.HBox;
-import main.java.execoes.ValidacaoException;
-import main.java.model.reservas.Reserva;
-import main.java.service.EspacoService;
-import main.java.service.RelatorioService;
-import main.java.service.ValidacaoService;
-import main.java.util.MensagemUtil;
-import main.java.view.MainCoworking;
+import execoes.ValidacaoException;
+import model.reservas.Reserva;
+import service.EspacoService;
+import service.RelatorioService;
+import service.ValidacaoService;
+import util.MensagemUtil;
+import view.MainCoworking;
 import javafx.stage.Stage;
 import javafx.scene.Scene;
 import javafx.fxml.FXMLLoader;
