@@ -1,0 +1,44 @@
+package service;
+
+import dao.adaptacao.PagamentoDAO;
+import execoes.PagamentoInexistenteException;
+import model.pagamentos.Pagamento;
+import model.reservas.Reserva;
+
+import java.time.LocalDateTime;
+import java.util.*;
+
+public class PagamentoService {
+
+    private final PagamentoDAO pagamentoDAO;
+
+    public PagamentoService(PagamentoDAO pagamentoDAO) {
+        this.pagamentoDAO = pagamentoDAO;
+    }
+
+    public Pagamento buscarPorId(int id) throws PagamentoInexistenteException {
+        Pagamento p = pagamentoDAO.buscarPorId(id);
+        if (p == null){
+            throw new PagamentoInexistenteException("Pagamento inexistente");
+        }
+        return p;
+    }
+
+    public List<Pagamento> listarTodos() {
+        return pagamentoDAO.carregarTodos();
+    }
+
+    public void atualizar(Pagamento p) {
+        pagamentoDAO.atualizar(p);
+    }
+
+    protected void cancelarPagamento(Reserva reserva, double valorCancelado) {
+        Pagamento pagamento = reserva.getPagamento();
+        if (pagamento != null) {
+            pagamento.setValorPago(valorCancelado);
+            pagamento.setData(LocalDateTime.now());
+            this.atualizar(pagamento);
+        }
+    }
+}
+

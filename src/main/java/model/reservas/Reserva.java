@@ -1,0 +1,128 @@
+package model.reservas;
+
+import execoes.DataInvalidaExeption;
+import model.espacos.Espaco;
+import model.pagamentos.MetodoDePagamento;
+import model.pagamentos.Pagamento;
+import util.CalculoReservaUtil;
+
+import javax.persistence.*;
+import java.time.LocalDateTime;
+
+@Entity
+public class Reserva {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private int id;
+
+    @ManyToOne
+    private Espaco espaco;
+
+    private LocalDateTime inicio;
+    private LocalDateTime fim;
+    private double valorCalculado;
+
+    @OneToOne(cascade = CascadeType.ALL)
+    private Pagamento pagamento;
+
+    private boolean projetor;
+
+    private boolean ativo;
+
+    protected Reserva() {
+    }
+
+    public Reserva(Espaco espaco, LocalDateTime inicio, LocalDateTime fim, MetodoDePagamento metodo, boolean projetor) throws DataInvalidaExeption{
+        this.espaco = espaco;
+        this.inicio = inicio;
+        this.fim = fim;
+        this.projetor = projetor;
+        double horas = calcularHoras(inicio, fim);
+        this.valorCalculado = CalculoReservaUtil.calcularValor(this.espaco, horas, this.projetor);
+        this.pagamento = new Pagamento(0, this.valorCalculado, LocalDateTime.now(),metodo);
+        this.ativo = true;
+    }
+
+    @PostPersist
+    private void atualizarPagamentoComIdReserva() {
+        if (pagamento != null) {
+            pagamento.setIdDaReserva(this.id);
+        }
+    }
+
+    private double calcularHoras(LocalDateTime inicio, LocalDateTime fim) throws DataInvalidaExeption {
+
+        if (!inicio.isAfter(LocalDateTime.now())){
+            throw new DataInvalidaExeption("Não se pode fazer uma reserva no passado.");
+        } else if (!inicio.isBefore(fim)){
+            throw new DataInvalidaExeption("A data inicial deve ser anterior à final.");
+        }
+
+        return CalculoReservaUtil.calcularHoras(inicio, fim);
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public Espaco getEspaco() {
+        return espaco;
+    }
+
+    public void setEspaco(Espaco espaco) {
+        this.espaco = espaco;
+    }
+
+    public LocalDateTime getInicio() {
+        return inicio;
+    }
+
+    public void setInicio(LocalDateTime inicio) {
+        this.inicio = inicio;
+    }
+
+    public LocalDateTime getFim() {
+        return fim;
+    }
+
+    public void setFim(LocalDateTime fim) {
+        this.fim = fim;
+    }
+
+    public double getValorCalculado() {
+        return valorCalculado;
+    }
+
+    public void setValorCalculado(double valorCalculado) {
+        this.valorCalculado = valorCalculado;
+    }
+
+    public boolean isProjetor() {
+        return projetor;
+    }
+
+    public void setProjetor(boolean projetor) {
+        this.projetor = projetor;
+    }
+
+    public Pagamento getPagamento() {
+        return pagamento;
+    }
+
+    public void setPagamento(Pagamento pagamento) {
+        this.pagamento = pagamento;
+    }
+
+    public boolean isAtivo() {
+        return ativo;
+    }
+
+    public void setAtivo(boolean ativo) {
+        this.ativo = ativo;
+    }
+}

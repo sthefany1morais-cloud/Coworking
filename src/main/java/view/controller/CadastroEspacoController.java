@@ -1,0 +1,132 @@
+package view.controller;
+
+import execoes.EspacoJaExistenteException;
+import javafx.beans.binding.BooleanBinding;
+import javafx.collections.FXCollections;
+import javafx.fxml.FXML;
+import javafx.scene.control.*;
+
+import execoes.ValidacaoException;
+import service.EspacoService;
+import util.CampoUtil;
+import util.MensagemUtil;
+import util.ValidacaoUtil;
+import view.MainCoworking;
+import service.SistemaService;
+
+import java.util.List;
+
+public class CadastroEspacoController {
+
+    private SistemaService sistemaService;
+
+    @FXML private ComboBox<String> tipoComboBox;
+    @FXML private TextField nomeField;
+    @FXML private TextField capacidadeField;
+    @FXML private TextField precoField;
+    @FXML private TextField campoEspecificoField;
+    @FXML private Button salvarButton;
+    @FXML private Button limparButton;
+    @FXML private Button voltarButton;
+    @FXML private Label errosLabel;
+    @FXML private Label campoEspecificoLabel;
+
+    private MainCoworking mainApp;
+    private EspacoService espacoService;
+
+    public void setMainApp(MainCoworking mainApp) {
+        this.mainApp = mainApp;
+    }
+
+    public void setEspacoService(EspacoService espacoService) {
+        this.espacoService = espacoService;
+    }
+
+    public void setSistemaService(SistemaService sistemaService) {
+        this.sistemaService = sistemaService;
+        CampoUtil.adicionarListenerFormatacaoDinheiro(precoField);
+        CampoUtil.adicionarListenerFormatacaoDinheiro(campoEspecificoField);
+    }
+
+    @FXML
+    private void initialize() {
+        tipoComboBox.setItems(FXCollections.observableArrayList("Sala de Reunião", "Cabine Individual", "Auditório"));
+        tipoComboBox.setOnAction(e -> atualizarCamposEspecificos());
+        CampoUtil.configurarCampoInteiro(capacidadeField);  // Usar CampoUtil
+        precoField.setText("0,00");
+        campoEspecificoField.setText("0,00");
+
+        BooleanBinding camposPreenchidos = nomeField.textProperty().isNotEmpty()
+                .and(capacidadeField.textProperty().isNotEmpty())
+                .and(precoField.textProperty().isNotEmpty())
+                .and(tipoComboBox.valueProperty().isNotNull());
+        salvarButton.disableProperty().bind(camposPreenchidos.not());
+    }
+
+    @FXML
+    private void atualizarCamposEspecificos() {
+        String tipo = tipoComboBox.getValue();
+        if ("Sala de Reunião".equals(tipo)) {
+            campoEspecificoLabel.setText("Taxa Fixa:");
+            campoEspecificoLabel.setVisible(true);
+            campoEspecificoField.setVisible(true);
+        } else if ("Auditório".equals(tipo)) {
+            campoEspecificoLabel.setText("Custo Adicional:");
+            campoEspecificoLabel.setVisible(true);
+            campoEspecificoField.setVisible(true);
+        } else {
+            campoEspecificoLabel.setVisible(false);
+            campoEspecificoField.setVisible(false);
+        }
+    }
+
+    @FXML
+    private void salvar() {
+        try {
+            String tipo = tipoComboBox.getValue();
+            String nome = nomeField.getText().trim();
+            String capText = capacidadeField.getText().trim();
+            String precoText = precoField.getText().trim();
+            String especificoText = campoEspecificoField.getText().trim();
+
+            List<String> erros = ValidacaoUtil.validarCamposEspaco(nome, capText, precoText, tipo, especificoText);
+            if (!erros.isEmpty()) {
+                throw new ValidacaoException(erros);
+            }
+
+            int capacidade = Integer.parseInt(capText);
+            double preco = Double.parseDouble(precoText.replace(",", "."));
+            if ("Sala de Reunião".equals(tipo)) {
+                double taxa = Double.parseDouble(especificoText.replace(",", "."));
+                espacoService.cadastrarSalaDeReuniao(nome, capacidade, preco, taxa);
+            } else if ("Cabine Individual".equals(tipo)) {
+                espacoService.cadastrarCabineIndividual(nome, capacidade, preco);
+            } else if ("Auditório".equals(tipo)) {
+                double custo = Double.parseDouble(especificoText.replace(",", "."));
+                espacoService.cadastrarAuditorio(nome, capacidade, preco, custo);
+            }
+            MensagemUtil.limparMensagens(errosLabel);
+            MensagemUtil.mostrarAlertaInformacao("Sucesso", "Espaço criado com sucesso!");
+            limpar();
+        } catch (ValidacaoException e) {
+            MensagemUtil.definirErro(errosLabel, "Erros encontrados:\n" + String.join("\n", e.getErros()));
+        } catch (EspacoJaExistenteException e) {
+            MensagemUtil.definirErro(errosLabel, "Erro: " + e.getMessage());
+        } catch (Exception e) {
+            MensagemUtil.definirErro(errosLabel, "Erro inesperado: " + e.getMessage());
+        }
+    }
+
+    @FXML
+    private void limpar() {
+        nomeField.clear();
+        capacidadeField.clear();
+        precoField.clear();
+        campoEspecificoField.clear();
+    }
+
+    @FXML
+    private void voltar() {
+        mainApp.mudarScene("MenuEspacos.fxml");
+    }
+}

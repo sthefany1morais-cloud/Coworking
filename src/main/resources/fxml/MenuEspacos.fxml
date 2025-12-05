@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.VBox?>
+
+<BorderPane xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="view.controller.MenuEspacosController">
+    <center>
+        <VBox alignment="CENTER" spacing="20.0" BorderPane.alignment="CENTER">
+            <children>
+                <Label fx:id="tituloLabel" text="Menu Espaços" />
+                <Button fx:id="criarEspacoButton" mnemonicParsing="false" text="Criar Espaço" onAction="#criarEspaco" />
+                <Button fx:id="editarEspacosButton" mnemonicParsing="false" text="Editar Espaços" onAction="#editarEspacos" />
+                <Button fx:id="voltarButton" mnemonicParsing="false" text="Voltar" onAction="#voltar" />
+                <Label fx:id="mensagemLabel" text="" wrapText="true" prefWidth="400.0" />  <!-- Adicionado para mensagens vazias -->
+            </children>
+        </VBox>
+    </center>
+</BorderPane>
