@@ -17,7 +17,7 @@ public class ValidacaoUtil {
         if ("Sala de Reunião".equals(tipo) && (especificoText.isEmpty() || !especificoText.matches("\\d+\\,?\\d*"))) erros.add("Taxa fixa deve ser um número positivo.");
         else if ("Sala de Reunião".equals(tipo) && Double.parseDouble(especificoText.replace(",", ".")) <= 0) erros.add("Taxa fixa não pode ser zero ou negativa.");
         if ("Auditório".equals(tipo) && (especificoText.isEmpty() || !especificoText.matches("\\d+\\,?\\d*"))) erros.add("Custo adicional deve ser um número positivo.");
-        else if ("Auditório".equals(tipo) && Double.parseDouble(especificoText.replace(",", ".")) <= 0) erros.add("Custo adicional não pode ser zero ou negativa.");
+        else if ("Auditório".equals(tipo) && Double.parseDouble(especificoText.replace(",", ".")) <= 0) erros.add("Custo adicional não pode ser zero ou negativo.");
         return erros;
     }
 
