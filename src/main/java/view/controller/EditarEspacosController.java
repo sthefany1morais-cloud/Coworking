@@ -9,6 +9,7 @@ import execoes.EspacoComReservasAtivasException;
 import model.espacos.Espaco;
 import service.EspacoService;
 import service.ReservaService;
+import util.FiltroUtil;
 import util.MensagemUtil;
 import util.TabelaUtil;
 import util.VerificacaoUtil;
@@ -74,25 +75,9 @@ public class EditarEspacosController {
     }
 
     private void filtrar() {
-        String busca = buscaField.getText().toLowerCase();
-        String tipo = filtroTipoComboBox.getValue();
-        boolean mostrarDisponiveis = disponiveisCheckBox.isSelected();
-        boolean mostrarIndisponiveis = indisponiveisCheckBox.isSelected();
-        filteredList.setPredicate(espaco -> {
-            boolean matchesBusca = busca.isEmpty() || String.valueOf(espaco.getId()).contains(busca) || espaco.getNome().toLowerCase().contains(busca);
-            boolean matchesTipo = "Todos".equals(tipo) || espaco.getClass().getSimpleName().equals(mapTipo(tipo));
-            boolean matchesDisponivel = (mostrarDisponiveis && espaco.isDisponivel()) || (mostrarIndisponiveis && !espaco.isDisponivel());
-            return matchesBusca && matchesTipo && matchesDisponivel;
-        });
-    }
-
-    private String mapTipo(String tipo) {
-        switch (tipo) {
-            case "Sala de Reunião": return "SalaDeReuniao";
-            case "Cabine Individual": return "CabineIndividual";
-            case "Auditório": return "Auditorio";
-            default: return tipo;
-        }
+        FiltroUtil.aplicarFiltroEspacos(filteredList, buscaField.getText().toLowerCase(),
+                filtroTipoComboBox.getValue(), disponiveisCheckBox.isSelected(),
+                indisponiveisCheckBox.isSelected());
     }
 
     @FXML

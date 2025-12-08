@@ -3,19 +3,20 @@ package util;
 import javafx.scene.control.*;
 
 import java.util.List;
+import java.util.function.UnaryOperator;
 
 public class CampoUtil {
 
     public static void configurarCampoInteiro(TextField field) {
-        java.util.function.UnaryOperator<javafx.scene.control.TextFormatter.Change> intFilter = change -> {
+        UnaryOperator<TextFormatter.Change> intFilter = change -> {
             String newText = change.getControlNewText();
             return newText.matches("\\d*") ? change : null;
         };
-        field.setTextFormatter(new javafx.scene.control.TextFormatter<>(intFilter));
+        field.setTextFormatter(new TextFormatter<>(intFilter));
     }
 
     public static void configurarCampoHora(TextField field) {
-        java.util.function.UnaryOperator<javafx.scene.control.TextFormatter.Change> horaFilter = change -> {
+        UnaryOperator<TextFormatter.Change> horaFilter = change -> {
             String newText = change.getControlNewText();
             return newText.matches("[\\d:]{0,5}") ? change : null;
         };

@@ -7,5 +7,4 @@ public class SistemaService {
     public void persistirDados() {
         DAOBase.persistirDadosGlobais();
     }
-
 }

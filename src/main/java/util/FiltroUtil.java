@@ -16,6 +16,23 @@ public class FiltroUtil {
         });
     }
 
+    public static void aplicarFiltroEspacos(FilteredList<Espaco> filteredList, String busca, String tipo, boolean mostrarDisponiveis, boolean mostrarIndisponiveis) {
+        filteredList.setPredicate(espaco -> {
+            boolean matchesBusca = busca.isEmpty() ||
+                    String.valueOf(espaco.getId()).contains(busca) ||
+                    espaco.getNome().toLowerCase().contains(busca);
+
+            boolean matchesTipo = "Todos".equals(tipo) ||
+                    espaco.getClass().getSimpleName().equals(mapTipo(tipo));
+
+            boolean matchesDisponivel =
+                    (mostrarDisponiveis && espaco.isDisponivel()) ||
+                            (mostrarIndisponiveis && !espaco.isDisponivel());
+
+            return matchesBusca && matchesTipo && matchesDisponivel;
+        });
+    }
+
     public static void aplicarFiltroReservas(FilteredList<Reserva> filteredList, String busca, String tipo) {
         filteredList.setPredicate(reserva -> {
             boolean matchesBusca = busca.isEmpty() || String.valueOf(reserva.getId()).contains(busca) || reserva.getEspaco().getNome().toLowerCase().contains(busca);

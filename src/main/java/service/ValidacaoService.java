@@ -1,27 +1,11 @@
-// Nova classe: ValidacaoService (em main.java.service)
 package service;
 
-import execoes.EspacoJaExistenteException;
 import execoes.ValidacaoException;
-import model.espacos.Espaco;
 
 import java.time.LocalDateTime;
 import java.util.List;
 
 public class ValidacaoService {
-
-    public static void validarNomeUnico(String nome, List<Espaco> espacosExistentes) throws EspacoJaExistenteException {
-        boolean existe = espacosExistentes.stream()
-                .anyMatch(e -> e.isExistente() &&
-                        e.isDisponivel() &&
-                        e.getNome().equalsIgnoreCase(nome));
-
-        if (existe) {
-            throw new EspacoJaExistenteException(
-                    "Já existe um espaço com o nome: \"" + nome + "\"."
-            );
-        }
-    }
 
     public static void validarPeriodo(LocalDateTime inicio, LocalDateTime fim) throws ValidacaoException {
         if (inicio == null || fim == null) {

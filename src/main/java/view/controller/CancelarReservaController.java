@@ -49,7 +49,7 @@ public class CancelarReservaController {
         filtroTipoComboBox.setValue("Todos");
         TabelaUtil.configurarColunasReservas(reservasTableView, idColumn, espacoColumn, tipoColumn, inicioColumn, fimColumn, valorColumn);
         buscaField.textProperty().addListener((obs, oldText, newText) -> filtrar());
-        filtroTipoComboBox.setOnAction(e -> filtrar());  // Adicionado listener para o ComboBox
+        filtroTipoComboBox.setOnAction(e -> filtrar());
         cancelarButton.disableProperty().bind(reservasTableView.getSelectionModel().selectedItemProperty().isNull());
     }
 
@@ -77,7 +77,7 @@ public class CancelarReservaController {
             try {
                 double reembolso = reservaService.cancelarReserva(selecionada.getId());
                 MensagemUtil.limparMensagens(mensagemLabel);
-                MensagemUtil.mostrarAlertaInformacao("Sucesso", "Reserva cancelada! Reembolso: R$" + FormatadorUtil.formatarDinheiro(reembolso));  // Corrigido para formatarDinheiro
+                MensagemUtil.mostrarAlertaInformacao("Sucesso", "Reserva cancelada! Reembolso: R$" + FormatadorUtil.formatarDinheiro(reembolso));
                 carregarReservas();
             } catch (ReservaInexistenteException | ReservaInativaException e) {
                 MensagemUtil.definirErro(mensagemLabel, "Erro: " + e.getMessage());

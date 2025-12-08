@@ -94,6 +94,9 @@ public class DetalhesReservaController {
             LocalDateTime fim = LocalDateTime.of(dataFimPicker.getValue(), LocalTime.parse(horaFimField.getText()));
             boolean projetor = projetorCheckBox.isSelected();
             double custo = CalculoReservaUtil.calcularCustoParaView(espacoSelecionado, inicio, fim, projetor);
+            if (custo < 0){
+                custo = 0;
+            }
             custoLabel.setText("Custo: R$" + FormatadorUtil.formatarDinheiro(custo));
         } catch (Exception e) {
             custoLabel.setText("Custo: R$0,00");
